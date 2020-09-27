@@ -1,0 +1,12 @@
+version: '3.7'
+
+services:
+  os:
+    build:
+      context: .
+      dockerfile: ./docker/esp32/Dockerfile
+    image: mk-os
+    volumes:
+      - /Volumes/GDrive/Users/m/esp/tensorflow:/opt/tensorflow
+      - /Volumes/GDrive/Users/m/esp/projects:/opt/projects
+    command: "tail -F anything"

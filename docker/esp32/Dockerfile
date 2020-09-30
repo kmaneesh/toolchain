@@ -53,12 +53,6 @@ ENV IDF_PATH=/opt/esp/idf
 ENV IDF_TOOLS_PATH=/opt/esp
 
 
-# ARG TF_CLONE_URL=https://github.com/tensorflow/tensorflow.git
-# ARG TF_CLONE_BRANCH_OR_TAG=master
-# ARG TF_CHECKOUT_REF=
-
-ENV TF_PATH=/opt/tensorflow
-
 RUN echo IDF_CHECKOUT_REF=$IDF_CHECKOUT_REF IDF_CLONE_BRANCH_OR_TAG=$IDF_CLONE_BRANCH_OR_TAG && \
     git clone --recursive \
       ${IDF_CLONE_BRANCH_OR_TAG:+-b $IDF_CLONE_BRANCH_OR_TAG} \
@@ -80,17 +74,22 @@ ENV IDF_CCACHE_ENABLE=1
 
 COPY ./docker/esp32/entrypoint.sh /opt/esp/entrypoint.sh
 
+ARG TF_CLONE_URL=https://github.com/tensorflow/tensorflow.git
+ARG TF_CLONE_BRANCH_OR_TAG=master
+ARG TF_CHECKOUT_REF=
+
+ENV TF_PATH=/opt/tensorflow
 
 # Clone Tensorflow
-# RUN echo TF_CHECKOUT_REF=$TF_CHECKOUT_REF TF_CLONE_BRANCH_OR_TAG=$TF_CLONE_BRANCH_OR_TAG && \
-#    git clone --recursive \
-#      ${TF_CLONE_BRANCH_OR_TAG:+-b $TF_CLONE_BRANCH_OR_TAG} \
-#      $TF_CLONE_URL $TF_PATH && \
-#    if [ -n "$TF_CHECKOUT_REF" ]; then \
-#      cd $TF_PATH && \
-#      git checkout $TF_CHECKOUT_REF && \
-#      git submodule update --init --recursive; \
-#    fi
+RUN echo TF_CHECKOUT_REF=$TF_CHECKOUT_REF TF_CLONE_BRANCH_OR_TAG=$TF_CLONE_BRANCH_OR_TAG && \
+   git clone --recursive \
+     ${TF_CLONE_BRANCH_OR_TAG:+-b $TF_CLONE_BRANCH_OR_TAG} \
+     $TF_CLONE_URL $TF_PATH && \
+   if [ -n "$TF_CHECKOUT_REF" ]; then \
+     cd $TF_PATH && \
+     git checkout $TF_CHECKOUT_REF && \
+     git submodule update --init --recursive; \
+   fi
 
 RUN ["chmod", "+x", "/opt/esp/entrypoint.sh"]
 ENTRYPOINT [ "/opt/esp/entrypoint.sh" ]
